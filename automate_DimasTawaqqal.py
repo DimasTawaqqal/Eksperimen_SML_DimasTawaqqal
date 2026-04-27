@@ -93,8 +93,8 @@ def preprocess_bank_marketing(input_path, output_dir='preprocessed_data'):
     train_df.to_csv(os.path.join(output_dir, 'X_train_preprocessed.csv'), index=False)
     test_df.to_csv(os.path.join(output_dir, 'X_test_preprocessed.csv'), index=False)
     
-    y_train_resampled.to_csv(os.path.join(output_dir, 'y_train_preprocessed.csv'), index=False, header=['y'])
-    y_test.to_csv(os.path.join(output_dir, 'y_test_preprocessed.csv'), index=False, header=['y'])
+    pd.DataFrame(y_train_resampled, columns=['y']).to_csv(os.path.join(output_dir, 'y_train_preprocessed.csv'), index=False)
+    pd.DataFrame(y_test, columns=['y']).to_csv(os.path.join(output_dir, 'y_test_preprocessed.csv'), index=False)
     
     import joblib
     joblib.dump(scaler, os.path.join(output_dir, 'scaler.pkl'))
