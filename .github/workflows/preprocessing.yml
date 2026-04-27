@@ -1,0 +1,49 @@
+name: Automated Preprocessing
+
+on:
+  push:
+    paths:
+      - 'data/raw/**'
+      - 'automate_DimasTawaqqal.py'
+  workflow_dispatch:  # manual trigger
+
+permissions:
+  contents: write  # izin agar workflow bisa git push
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # perlu history lengkap untuk push
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run preprocessing script
+      run: |
+        python automate_DimasTawaqqal.py --input data/raw/bank-additional-full.csv --output processing
+        
+    - name: Upload preprocessed data as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: preprocessed-data
+        path: processing/
+        
+    - name: Commit and push if changes (optional)
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add processing/
+        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update preprocessed data"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
