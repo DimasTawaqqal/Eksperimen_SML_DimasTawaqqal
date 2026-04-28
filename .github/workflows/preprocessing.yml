@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - 'data/raw/**'
-      - 'automate_DimasTawaqqal.py'
-  workflow_dispatch:  # manual trigger
+      - 'processing/automate_DimasTawaqqal.py'
+  workflow_dispatch: 
 
 permissions:
-  contents: write  # izin agar workflow bisa git push
+  contents: write 
 
 jobs:
   preprocess:
@@ -18,7 +18,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # perlu history lengkap untuk push
+        fetch-depth: 0 
       
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -28,11 +28,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r processing/requirements.txt
         
     - name: Run preprocessing script
       run: |
-        python automate_DimasTawaqqal.py --input data/raw/bank-additional-full.csv --output processing
+        python processing/automate_DimasTawaqqal.py --input data/raw/bank-additional-full.csv --output processing
         
     - name: Upload preprocessed data as artifact
       uses: actions/upload-artifact@v4
